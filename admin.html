@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSides Perth — Admin</title>
+  <!-- Prevent search engines from indexing the admin page -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-page">
+
+  <!-- ===== PIN OVERLAY (shown until correct PIN entered) ===== -->
+  <div id="pin-overlay" class="pin-overlay">
+    <div class="pin-box">
+      <h2>BSides Perth</h2>
+      <p>Enter your organiser PIN to access the planning page.</p>
+      <input
+        type="password"
+        id="pin-input"
+        class="form-control"
+        placeholder="PIN"
+        autocomplete="off"
+        maxlength="32"
+      >
+      <button id="pin-submit" class="btn btn-primary w-full mt-4">Enter</button>
+      <p id="pin-error" class="pin-error hidden">Incorrect PIN. Please try again.</p>
+    </div>
+  </div>
+
+  <!-- ===== NAME PROMPT (shown once when organiser first opens page) ===== -->
+  <div id="name-prompt-overlay" class="name-prompt-overlay hidden">
+    <div class="name-prompt-box">
+      <h2>Welcome!</h2>
+      <p>Enter your name so other organisers can see who is editing the schedule.</p>
+      <input
+        type="text"
+        id="name-input"
+        class="form-control"
+        placeholder="Your name"
+        maxlength="50"
+        autocomplete="name"
+      >
+      <button id="name-submit" class="btn btn-primary w-full mt-4">Let's go</button>
+    </div>
+  </div>
+
+  <!-- ===== LOCK BANNER ===== -->
+  <div id="lock-banner" class="lock-banner hidden no-print">
+    <span>🔒 Schedule is locked — editing is disabled.</span>
+    <button id="unlock-btn" class="btn btn-sm btn-secondary">Unlock</button>
+  </div>
+
+  <!-- ===== ADMIN TOP BAR ===== -->
+  <header class="admin-topbar no-print">
+    <span class="admin-topbar-brand">BSides Perth — Admin</span>
+    <div id="last-edited-bar" class="last-edited-bar"></div>
+    <div class="admin-topbar-actions">
+      <button id="export-csv-btn" class="btn btn-secondary btn-sm" title="Download schedule as CSV spreadsheet">
+        ⬇ Export CSV
+      </button>
+      <button id="export-pdf-btn" class="btn btn-secondary btn-sm" title="Print or save schedule as PDF">
+        🖨 Print / PDF
+      </button>
+      <button id="lock-toggle-btn" class="btn btn-secondary btn-sm" title="Lock the schedule to prevent accidental changes">
+        🔒 Lock Schedule
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="admin-main">
+
+    <!-- STEP 1: EVENT SETUP -->
+    <section id="step-setup" class="step-section">
+      <h2>
+        <span class="step-number">1</span>
+        Event Setup
+      </h2>
+
+      <form id="setup-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="conf-name">
+              Conference name <span class="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="conf-name"
+              name="name"
+              class="form-control"
+              value="BSides Perth"
+              required
+              placeholder="BSides Perth"
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="conf-year">
+              Year <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="conf-year"
+              name="year"
+              class="form-control"
+              min="2024"
+              max="2099"
+              required
+              placeholder="2026"
+            >
+          </div>
+        </div>
+
+        <div class="form-row mt-4">
+          <div class="form-group">
+            <label class="form-label" for="num-days">
+              Number of days <span class="required">*</span>
+            </label>
+            <select id="num-days" name="numDays" class="form-control">
+              <option value="1">1 day</option>
+              <option value="2">2 days</option>
+              <option value="3">3 days</option>
+              <option value="4">4 days</option>
+              <option value="5">5 days</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="default-talk-duration">
+              Default talk duration (min)
+            </label>
+            <input
+              type="number"
+              id="default-talk-duration"
+              name="defaultTalkDuration"
+              class="form-control"
+              value="45"
+              min="5"
+              max="480"
+            >
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="default-buffer">
+              Buffer between talks (min)
+            </label>
+            <input
+              type="number"
+              id="default-buffer"
+              name="defaultBufferTime"
+              class="form-control"
+              value="10"
+              min="0"
+              max="60"
+            >
+          </div>
+        </div>
+
+        <!-- Day rows (generated dynamically) -->
+        <div id="day-rows-container" class="day-rows-container mt-4"></div>
+
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">
+            Save &amp; Continue to Sessions →
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- STEP 2: SESSIONS & SCHEDULE -->
+    <section id="step-schedule" class="step-section hidden">
+      <h2>
+        <span class="step-number">2</span>
+        Sessions &amp; Schedule
+      </h2>
+
+      <div class="admin-layout">
+
+        <!-- LEFT: Session pool -->
+        <aside class="session-pool no-print" id="session-pool">
+          <h2>
+            Sessions
+            <span id="session-pool-count" class="session-pool-count"></span>
+          </h2>
+          <button id="add-session-btn" class="btn btn-primary w-full">+ Add Session</button>
+          <div id="session-list" class="session-list mt-4">
+            <!-- Session items rendered by sessions.js -->
+          </div>
+        </aside>
+
+        <!-- RIGHT: Schedule grid -->
+        <main class="schedule-grid" id="schedule-grid">
+
+          <!-- Toolbar -->
+          <div class="schedule-grid-toolbar no-print">
+            <button id="auto-schedule-btn" class="btn btn-primary">
+              ⚡ Auto-Schedule
+            </button>
+            <button id="clear-schedule-btn" class="btn btn-secondary">
+              Clear Schedule
+            </button>
+            <span class="text-sm text-muted" id="schedule-status"></span>
+          </div>
+
+          <!-- Warnings panel (hidden until auto-scheduler finds problems) -->
+          <div id="warnings-panel" class="warnings-panel hidden no-print">
+            <div class="warnings-panel-header" id="warnings-toggle">
+              ⚠️ Warnings <span id="warnings-count"></span>
+              <span style="font-size:0.8em">▾ click to expand</span>
+            </div>
+            <div class="warnings-panel-body hidden" id="warnings-body">
+              <ul id="warnings-list"></ul>
+            </div>
+          </div>
+
+          <!-- Day columns (generated dynamically) -->
+          <div id="days-container">
+            <!-- Day column components rendered by scheduler.js / main.js -->
+          </div>
+
+        </main>
+      </div>
+    </section>
+
+  </div><!-- /.admin-main -->
+
+  <!-- ===== ADMIN FOOTER ===== -->
+  <footer class="admin-footer no-print">
+    <p>BSides Perth Admin &mdash; changes save automatically</p>
+  </footer>
+
+  <!-- ===== SESSION EDIT MODAL ===== -->
+  <div id="session-modal" class="modal-overlay session-modal hidden" role="dialog" aria-modal="true" aria-labelledby="session-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="session-modal-title">Add Session</h3>
+        <button class="modal-close" id="session-modal-close" aria-label="Close">×</button>
+      </div>
+
+      <form id="session-form" novalidate>
+        <input type="hidden" id="session-id-field">
+
+        <div class="form-group">
+          <label class="form-label" for="sess-title">
+            Title <span class="required">*</span>
+          </label>
+          <input type="text" id="sess-title" name="title" class="form-control"
+            placeholder="e.g. Attacking Active Directory" required maxlength="200">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="sess-speaker">Speaker name</label>
+            <input type="text" id="sess-speaker" name="speaker" class="form-control"
+              placeholder="Full name" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sess-type">Session type</label>
+            <select id="sess-type" name="sessionType" class="form-control">
+              <option value="Talk">Talk</option>
+              <option value="Panel">Panel</option>
+              <option value="Workshop">Workshop</option>
+              <option value="Lightning Talk">Lightning Talk</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sess-bio">Speaker bio (optional)</label>
+          <textarea id="sess-bio" name="bio" class="form-control" rows="3"
+            placeholder="Brief bio shown on the public schedule…" maxlength="1000"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sess-photo">Speaker photo URL (optional)</label>
+          <input type="url" id="sess-photo" name="photoUrl" class="form-control"
+            placeholder="https://example.com/photo.jpg">
+          <img id="photo-preview" class="photo-preview" alt="Photo preview">
+          <p class="form-hint">Enter a public image URL. The photo will appear on the public schedule.</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="sess-duration">Duration (min)</label>
+            <input type="number" id="sess-duration" name="durationMinutes" class="form-control"
+              value="45" min="5" max="480">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sess-day-pref">Day preference</label>
+            <select id="sess-day-pref" name="dayPreference" class="form-control">
+              <option value="">No preference</option>
+              <!-- Day options injected dynamically -->
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-check">
+              <input type="checkbox" id="sess-keynote" name="isKeynote">
+              <span>Keynote</span>
+            </label>
+            <p class="form-hint">Keynotes are placed in the first or second slot of the day.</p>
+          </div>
+          <div class="form-group">
+            <label class="form-check">
+              <input type="checkbox" id="sess-confirmed" name="confirmed" checked>
+              <span>Confirmed</span>
+            </label>
+            <p class="form-hint">Uncheck if this session is still tentative.</p>
+          </div>
+        </div>
+
+        <div id="session-form-error" class="alert alert-error hidden mt-4"></div>
+
+        <div class="flex gap-3 mt-4">
+          <button type="submit" class="btn btn-primary flex-1">Save Session</button>
+          <button type="button" id="session-modal-cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== BLOCK EDIT MODAL ===== -->
+  <div id="block-modal" class="modal-overlay block-modal hidden" role="dialog" aria-modal="true" aria-labelledby="block-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="block-modal-title">Edit Block</h3>
+        <button class="modal-close" id="block-modal-close" aria-label="Close">×</button>
+      </div>
+      <form id="block-form" novalidate>
+        <input type="hidden" id="block-day-index">
+        <input type="hidden" id="block-slot-id">
+        <input type="hidden" id="block-type-field">
+
+        <div class="form-group">
+          <label class="form-label" for="block-label">Label</label>
+          <input type="text" id="block-label" name="label" class="form-control"
+            placeholder="e.g. Morning Break" maxlength="80">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="block-duration">Duration (min)</label>
+          <input type="number" id="block-duration" name="durationMinutes"
+            class="form-control" value="30" min="1" max="480">
+        </div>
+
+        <div id="block-location-group" class="form-group hidden">
+          <label class="form-label" for="block-location">Location (optional)</label>
+          <input type="text" id="block-location" name="location" class="form-control"
+            placeholder="e.g. Rooftop Bar, 123 Main St" maxlength="100">
+        </div>
+
+        <div class="flex gap-3 mt-4">
+          <button type="submit" class="btn btn-primary flex-1">Save Block</button>
+          <button type="button" id="block-modal-cancel" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== FIREBASE + APP SCRIPTS ===== -->
+  <script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore }   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { firebaseConfig, ADMIN_PIN } from "./js/firebase-config.js";
+    import { initAdmin } from "./js/admin/main.js";
+
+    // -----------------------------------------------------------------------
+    // PIN CHECK — runs immediately before Firebase is even initialised
+    // -----------------------------------------------------------------------
+    const pinOverlay  = document.getElementById("pin-overlay");
+    const pinInput    = document.getElementById("pin-input");
+    const pinSubmit   = document.getElementById("pin-submit");
+    const pinError    = document.getElementById("pin-error");
+
+    function isVerified() {
+      return sessionStorage.getItem("pinVerified") === "1";
+    }
+
+    function boot() {
+      pinOverlay.style.display = "none";
+      const app = initializeApp(firebaseConfig);
+      const db  = getFirestore(app);
+      initAdmin(db);
+    }
+
+    function tryPin() {
+      if (pinInput.value === ADMIN_PIN) {
+        sessionStorage.setItem("pinVerified", "1");
+        boot();
+      } else {
+        pinError.classList.remove("hidden");
+        pinInput.value = "";
+        pinInput.focus();
+      }
+    }
+
+    if (isVerified()) {
+      boot();
+    } else {
+      pinOverlay.style.display = "flex";
+      pinSubmit.addEventListener("click", tryPin);
+      pinInput.addEventListener("keydown", e => { if (e.key === "Enter") tryPin(); });
+      // Focus the PIN input once the overlay is shown
+      setTimeout(() => pinInput.focus(), 100);
+    }
+  </script>
+
+</body>
+</html>

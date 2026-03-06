@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSides Perth — Schedule</title>
+  <meta name="description" content="Conference schedule for BSides Perth, a cybersecurity conference in Western Australia.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/public.css">
+</head>
+<body>
+
+  <!-- ===== CONFERENCE HEADER ===== -->
+  <header class="conf-header">
+    <div class="container">
+      <h1 id="conf-title">BSides Perth</h1>
+      <p id="conf-meta" class="conf-meta"></p>
+    </div>
+  </header>
+
+  <!-- ===== DAY TAB NAVIGATION ===== -->
+  <div class="day-tabs-wrapper no-print">
+    <nav id="day-tabs" class="day-tabs" role="tablist" aria-label="Conference days"></nav>
+  </div>
+
+  <!-- ===== SCHEDULE CONTENT ===== -->
+  <main id="schedule-root">
+    <!-- Rendered dynamically by js/public/schedule.js -->
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading schedule…</p>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <p>BSides Perth &mdash; <a href="https://bsidesperth.com.au" target="_blank" rel="noopener">bsidesperth.com.au</a></p>
+  </footer>
+
+  <!-- ===== FIREBASE + APP SCRIPTS ===== -->
+  <!--
+    Firebase SDK is loaded directly from Google's CDN — no npm or build tools needed.
+    If you need to update the Firebase version, change the version number in both
+    import URLs below AND in js/firestore.js.
+  -->
+  <script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore }   from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { firebaseConfig } from "./js/firebase-config.js";
+    import { initSchedule }   from "./js/public/main.js";
+
+    // Initialise Firebase and boot the schedule app
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+    initSchedule(db);
+  </script>
+
+</body>
+</html>

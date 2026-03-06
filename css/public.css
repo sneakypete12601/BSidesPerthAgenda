@@ -1,0 +1,438 @@
+/* =============================================================================
+   PUBLIC SCHEDULE PAGE STYLES
+   ============================================================================= */
+
+/* --- Page header ----------------------------------------------------------- */
+.conf-header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #922b21 100%);
+  color: #fff;
+  padding: var(--space-10) 0 var(--space-8);
+  text-align: center;
+}
+
+.conf-header h1 {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+  color: #fff;
+}
+
+.conf-header .conf-meta {
+  font-size: var(--font-size-lg);
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+
+/* --- Day tab navigation ---------------------------------------------------- */
+.day-tabs-wrapper {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.day-tabs {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 0;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.day-tabs::-webkit-scrollbar { display: none; }
+
+.day-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) var(--space-5);
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.day-tab:hover { color: var(--color-primary); }
+
+.day-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.day-tab-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.day-tab-date {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+}
+
+/* --- Schedule root --------------------------------------------------------- */
+#schedule-root {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-16);
+}
+
+/* --- Day section header ---------------------------------------------------- */
+.day-schedule-header {
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.day-schedule-header h2 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text);
+}
+
+/* --- Slot list ------------------------------------------------------------- */
+.slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* --- Buffer slot ----------------------------------------------------------- */
+.slot-buffer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.slot-buffer .slot-time {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-xs);
+  min-width: 64px;
+  color: var(--color-text-light);
+}
+
+.slot-buffer .slot-buffer-label {
+  flex: 1;
+  font-style: italic;
+}
+
+.slot-buffer .slot-duration {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+}
+
+/* --- Block slot ------------------------------------------------------------ */
+.slot-block {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: #f0f3f8;
+  border-radius: var(--radius-md);
+  border-left: 4px solid #b0b8c4;
+  font-size: var(--font-size-sm);
+}
+
+.slot-block-registration,
+.slot-block-doors-open {
+  border-left-color: #2980b9;
+  background: #eaf4fb;
+}
+
+.slot-block-morning-break,
+.slot-block-afternoon-break {
+  border-left-color: var(--color-accent);
+  background: #fef5e7;
+}
+
+.slot-block-lunch {
+  border-left-color: #27ae60;
+  background: #eafaf1;
+}
+
+.slot-block-evening-social {
+  border-left-color: var(--color-primary);
+  background: #fdedec;
+}
+
+.slot-block .slot-time {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-xs);
+  min-width: 64px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.slot-block-icon {
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+
+.slot-block-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.slot-block-label {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.slot-block-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.slot-block .slot-duration {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+/* --- Session slot ---------------------------------------------------------- */
+.slot-session {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.slot-keynote {
+  /* Keynote sessions get extra visual prominence */
+}
+
+.session-time-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-top: var(--space-3);
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.session-start {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.session-end {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* --- Session card ---------------------------------------------------------- */
+.session-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  transition: box-shadow var(--transition-base);
+  position: relative;
+}
+
+.session-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Keynote styling */
+.slot-keynote .session-card {
+  border-color: #f5c842;
+  border-left: 4px solid var(--color-warning);
+  background: linear-gradient(to right, #fffdf0 0%, var(--color-surface) 60%);
+}
+
+.speaker-photo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+}
+
+.session-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.session-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+  margin-bottom: var(--space-1);
+}
+
+.session-speaker {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.session-duration {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  white-space: nowrap;
+  padding-top: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* --- Speaker bio (collapsible) --------------------------------------------- */
+.session-bio {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.session-bio.expanded {
+  max-height: 800px;
+}
+
+.bio-toggle {
+  display: inline-block;
+  margin-top: var(--space-2);
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.bio-toggle:hover { color: var(--color-primary-dark); }
+
+/* --- Empty / loading states ------------------------------------------------ */
+.schedule-empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+}
+
+/* --- Page footer ----------------------------------------------------------- */
+.site-footer {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  border-top: 1px solid var(--color-border);
+}
+
+/* --- Responsive ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .conf-header {
+    padding: var(--space-8) 0 var(--space-6);
+  }
+
+  .slot-session {
+    grid-template-columns: 60px 1fr;
+    gap: var(--space-2);
+  }
+
+  .session-card {
+    padding: var(--space-3);
+    flex-direction: column;
+  }
+
+  .speaker-photo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .session-title {
+    font-size: var(--font-size-md);
+  }
+
+  .session-duration {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+  }
+}
+
+/* --- Print styles ---------------------------------------------------------- */
+@media print {
+  .day-tabs-wrapper,
+  .bio-toggle,
+  .site-footer {
+    display: none !important;
+  }
+
+  .conf-header {
+    background: none !important;
+    color: #000 !important;
+    padding: 1rem 0;
+    border-bottom: 2px solid #000;
+  }
+
+  .conf-header h1 { color: #000 !important; }
+  .conf-header .conf-meta { color: #333 !important; opacity: 1 !important; }
+
+  #schedule-root {
+    padding: 1rem 0;
+    max-width: none;
+  }
+
+  /* Show all day sections when printing, not just the active one */
+  .day-schedule { display: block !important; page-break-before: always; }
+  .day-schedule:first-child { page-break-before: auto; }
+
+  .session-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+
+  .slot-session { margin-bottom: 0.5rem; }
+
+  .session-bio { max-height: none !important; }
+
+  .badge {
+    border: 1px solid #999;
+    background: none !important;
+    color: #333 !important;
+  }
+
+  .slot-block { border: 1px solid #ccc; background: #f5f5f5 !important; }
+}
