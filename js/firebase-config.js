@@ -16,12 +16,13 @@
 // =============================================================================
 
 export const firebaseConfig = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId:         "YOUR_PROJECT_ID",
-  storageBucket:     "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey: "AIzaSyAFsdCjNfPpz9g2ukYCqGILqkFQOgoy-AY",
+  authDomain: "bsides-perth-2026.firebaseapp.com",
+  projectId: "bsides-perth-2026",
+  storageBucket: "bsides-perth-2026.firebasestorage.app",
+  messagingSenderId: "863543629682",
+  appId: "1:863543629682:web:261c02e9c391aa349b2feb",
+  measurementId: "G-9N1YFHRDX2"
 };
 
 // The Firestore document ID for this conference. You generally never need to
@@ -32,4 +33,4 @@ export const CONFERENCE_ID = "bsides-perth";
 // Change this to something only your organising team knows.
 // Note: this is security-by-obscurity — suitable for a low-stakes conference
 // schedule tool, but not for sensitive data.
-export const ADMIN_PIN = "bsides2026";
+export const ADMIN_PIN = "TheSpruceGoose26";
